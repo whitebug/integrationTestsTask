@@ -54,7 +54,7 @@ void main() {
 
         // Check if we are on the green screen
         final Finder greenContainer = find.byWidgetPredicate(
-              (widget) => widget is Container && widget.color == greenColor,
+          (widget) => widget is Container && widget.color == greenColor,
         );
         final Finder greenScreen = find.descendant(
           of: greenContainer,
@@ -148,20 +148,18 @@ void main() {
         // Check if text with number is on screen
         final Finder centerText = find.descendant(of: center, matching: find.byType(Text));
         expect(centerText, findsOneWidget);
-        final Finder numberChecker = find.byWidgetPredicate(
-          (widget) {
-            final bool checkIfTextIsNumber =
-                widget is Text && widget.data != null && int.tryParse(widget.data!) != null;
-            if (!checkIfTextIsNumber) {
-              // It seems that text is not a number
-              return false;
-            }
-            // Check if the number in required limits
-            final int number = int.parse(widget.data!);
-            return number >= 0 && number <= 99;
-          },
-        );
-        expect(numberChecker, findsOneWidget);
+
+        final Finder textContainer = find.byKey(const Key(Keys.randomNumberContainerKey));
+        final Finder text = find.descendant(of: textContainer, matching: find.byType(Text));
+
+        final Text textWidget = text.evaluate().single.widget as Text;
+        // Check if text is number
+        final bool ifNumber = textWidget.data != null && int.tryParse(textWidget.data!) != null;
+        expect(ifNumber, true);
+        // Check if number within required limits
+        final int number = int.parse(textWidget.data!);
+        final bool ifWithinLimits = number >= 0 && number <= 99;
+        expect(ifWithinLimits, true);
       },
     );
     testWidgets(
